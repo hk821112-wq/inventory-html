@@ -2961,6 +2961,88 @@
     }
 
 
+  
+
+    /* ==============================
+       V36 頂部操作列修正：防止按鈕 / 匯入檔案輸入框跑版
+       ============================== */
+    .topbar{
+      display:grid!important;
+      grid-template-columns:max-content minmax(0,1fr)!important;
+      align-items:center!important;
+      gap:18px!important;
+      overflow:hidden!important;
+      padding:22px 26px!important;
+    }
+
+    .topbar .brand{
+      width:220px!important;
+      min-width:220px!important;
+      max-width:220px!important;
+    }
+
+    .topbar .brand small,
+    .topbar .brand h1,
+    .topbar .brand p{
+      white-space:nowrap!important;
+    }
+
+    .topbar .top-actions{
+      width:100%!important;
+      min-width:0!important;
+      max-width:100%!important;
+      display:flex!important;
+      align-items:center!important;
+      justify-content:flex-start!important;
+      flex-wrap:nowrap!important;
+      gap:10px!important;
+      overflow-x:auto!important;
+      overflow-y:hidden!important;
+      padding:4px 0 8px!important;
+      white-space:nowrap!important;
+      scrollbar-width:thin;
+    }
+
+    .topbar .top-actions > *{
+      flex:0 0 auto!important;
+    }
+
+    #importJson,
+    #appendJson,
+    .topbar .top-actions input[type="file"]{
+      display:none!important;
+      position:absolute!important;
+      width:0!important;
+      height:0!important;
+      opacity:0!important;
+      pointer-events:none!important;
+      left:-99999px!important;
+    }
+
+    .topbar .top-actions .auth-input{
+      width:180px!important;
+      min-width:180px!important;
+      max-width:180px!important;
+    }
+
+    @media(max-width:980px){
+      .topbar{
+        grid-template-columns:max-content minmax(0,1fr)!important;
+        padding:18px!important;
+      }
+      .topbar .brand{
+        width:180px!important;
+        min-width:180px!important;
+        max-width:180px!important;
+      }
+      .topbar .brand h1{
+        font-size:34px!important;
+      }
+      .topbar .top-actions{
+        justify-content:flex-start!important;
+      }
+    }
+
   </style>
 </head>
 <body class="auth-checking">
@@ -3321,7 +3403,7 @@ const state={products:[],sales:[],actions:[],previews:[],settings:{feePlatform:.
 let currentProfile=null;
 let managedUsers=[];
 const STOCK_LOGIN_DOMAIN='stock.local';
-const ADMIN_USERS_FUNCTION_URL = `${SUPABASE_URL}/functions/v1/clever-task`;
+const ADMIN_USERS_FUNCTION_URL=`${SUPABASE_URL}/functions/v1/clever-task`;
 const USER_DEFAULT_PERMISSIONS={
   view_dashboard:true,
   view_ship:true,
@@ -3434,7 +3516,8 @@ function applyPermissionUI(){
   });
   const accountCard=$('accountManagerCard');
   if(accountCard)accountCard.style.display=hasPermission('manage_users')?'':'none';
-  ['btnExportJson','btnExportCsv','btnExportSalesCsv','btnExportActionCsv','importJson','appendJson'].forEach(id=>{const el=$(id);if(el)el.style.display=hasPermission('import_export')?'':'none'});
+  ['btnExportJson','btnExportCsv','btnExportSalesCsv','btnExportActionCsv'].forEach(id=>{const el=$(id);if(el)el.style.display=hasPermission('import_export')?'':'none'});
+  ['importJson','appendJson'].forEach(id=>{const el=$(id);if(el)el.style.display='none'});
   document.querySelectorAll('label[for="importJson"],label[for="appendJson"]').forEach(el=>{el.style.display=hasPermission('import_export')?'inline-flex':'none'});
   const active=activeTabId();
   const activePerm=TAB_VIEW_PERMISSIONS[active];
