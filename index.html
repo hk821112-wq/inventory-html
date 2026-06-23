@@ -2804,6 +2804,163 @@
     }
 
 
+    /* ==============================
+       V35 帳號管理 / 權限設定
+       ============================== */
+    .user-manager-card{
+      margin-top:16px;
+    }
+
+    .user-manager-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:14px;
+    }
+
+    .user-manager-title{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
+
+    .user-manager-title h2{
+      margin:0;
+    }
+
+    .user-form-box{
+      border:1px solid var(--line);
+      background:#f9fafb;
+      border-radius:18px;
+      padding:16px;
+      margin-bottom:16px;
+    }
+
+    .permission-grid{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .permission-check{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      min-height:38px;
+      padding:8px 10px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:#fff;
+      color:#374151;
+      font-size:13px;
+      font-weight:900;
+      cursor:pointer;
+      user-select:none;
+    }
+
+    .permission-check input{
+      width:auto;
+      min-height:auto;
+      transform:scale(1.15);
+      accent-color:var(--primary);
+    }
+
+    .user-card{
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:#fff;
+      padding:14px;
+      margin-bottom:12px;
+    }
+
+    .user-card summary{
+      cursor:pointer;
+      list-style:none;
+    }
+
+    .user-card summary::-webkit-details-marker{
+      display:none;
+    }
+
+    .user-summary-row{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .user-name-block{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
+
+    .user-name-block strong{
+      font-size:17px;
+    }
+
+    .user-status-pill{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:30px;
+      padding:5px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:1000;
+      background:#dcfce7;
+      color:#15803d;
+      border:1px solid #bbf7d0;
+    }
+
+    .user-status-pill.off{
+      background:#fee2e2;
+      color:#b91c1c;
+      border-color:#fecaca;
+    }
+
+    .user-edit-area{
+      margin-top:14px;
+      padding-top:14px;
+      border-top:1px solid var(--line);
+    }
+
+    .user-edit-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:14px;
+    }
+
+    body.dark-mode .user-form-box,
+    body.dark-mode .user-card{
+      background:#0f172a;
+      border-color:#334155;
+    }
+
+    body.dark-mode .permission-check{
+      background:#111827;
+      border-color:#334155;
+      color:#e5e7eb;
+    }
+
+    @media(max-width:1180px){
+      .permission-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+      }
+    }
+
+    @media(max-width:680px){
+      .permission-grid{
+        grid-template-columns:1fr;
+      }
+    }
+
+
   </style>
 </head>
 <body class="auth-checking">
@@ -2815,8 +2972,8 @@
       <p class="login-subtitle">請先登入帳號密碼，登入成功後才會進入庫存系統。</p>
 
       <div class="login-form">
-        <label for="gateEmail">帳號 Email</label>
-        <input id="gateEmail" type="email" placeholder="輸入 Email" autocomplete="username">
+        <label for="gateEmail">帳號</label>
+        <input id="gateEmail" type="text" placeholder="例如 user、staff01" autocomplete="username">
 
         <label for="gatePassword">密碼</label>
         <input id="gatePassword" type="password" placeholder="輸入密碼" autocomplete="current-password">
@@ -2826,7 +2983,7 @@
       </div>
 
       <div class="login-footnote">
-        未登入狀態下不顯示任何庫存資料。請使用已授權的 Supabase 帳號登入。
+        未登入狀態下不顯示任何庫存資料。請使用已授權的庫存系統帳號登入。
       </div>
     </section>
   </div>
@@ -2839,8 +2996,8 @@
         <p></p>
       </div>
       <div class="top-actions">
-        <input class="auth-input" id="authEmail" placeholder="Email" autocomplete="username">
-        <input class="auth-input" id="authPassword" type="password" placeholder="Password" autocomplete="current-password">
+        <input class="auth-input" id="authEmail" placeholder="帳號" autocomplete="username">
+        <input class="auth-input" id="authPassword" type="password" placeholder="密碼" autocomplete="current-password">
         <button class="btn primary" id="btnLogin">登入</button>
         <button class="btn ghost" id="btnLogout" style="display:none">登出</button>
         <span class="auth-status fail" id="authStatus">未登入</span>
@@ -3081,6 +3238,52 @@
           </div>
         </article>
         <article class="card span-6"><h2>使用注意</h2><div class="notice warning">多台電腦使用同一個網頁即可共用資料。</div><ul><li>大量操作時請等畫面顯示完成。</li><li>出貨由資料庫函式保護，避免多台設備同時扣錯庫存。</li><li>仍建議定期匯出 JSON 或試算表備份。</li></ul></article>
+
+        <article class="card span-12 user-manager-card" id="accountManagerCard">
+          <div class="user-manager-header">
+            <div class="user-manager-title">
+              <h2>帳號管理 / 權限設定</h2>
+              <div class="muted">可新增帳號、修改密碼、停用帳號、移除帳號，並設定每個帳號可使用的功能。</div>
+            </div>
+            <button class="btn ghost" id="btnReloadUsers" type="button">重新讀取帳號</button>
+          </div>
+
+          <div class="user-form-box">
+            <h3>新增帳號</h3>
+            <div class="form-grid">
+              <div class="field">
+                <label>帳號</label>
+                <input id="newAccountUsername" placeholder="例如 user、staff01">
+              </div>
+
+              <div class="field">
+                <label>密碼</label>
+                <input id="newAccountPassword" type="text" value="123456" placeholder="預設 123456">
+              </div>
+
+              <div class="field">
+                <label>角色</label>
+                <select id="newAccountRole">
+                  <option value="user">一般用戶</option>
+                  <option value="admin">管理員</option>
+                </select>
+              </div>
+
+              <div class="field full">
+                <label>新帳號權限</label>
+                <div id="newAccountPermissions"></div>
+              </div>
+
+              <div class="field full">
+                <button class="btn primary" id="btnCreateAccount" type="button">建立新帳號</button>
+              </div>
+            </div>
+          </div>
+
+          <h3>已建立帳號</h3>
+          <div id="userManagerStatus" class="notice">尚未讀取帳號。</div>
+          <div id="managedUsersTable"></div>
+        </article>
       </div>
     </section>
   </div>
@@ -3114,6 +3317,230 @@ let dbUsageTimer=null;
 let currentUser=null;
 let sessionLoginPassword='';
 const state={products:[],sales:[],actions:[],previews:[],settings:{feePlatform:.055,feeService:.02,feeExtra:.02,feeOther:0,shippingBase:60,lowStockThreshold:3},filters:{product:'',stock:'',purchase:'',stockNextDayOnly:false,purchaseNextDayOnly:false},actionFilters:{startDate:''},salesFilters:{actionMode:'all',dateRange:'today',customStart:'',customEnd:''}};
+
+let currentProfile=null;
+let managedUsers=[];
+const STOCK_LOGIN_DOMAIN='stock.local';
+const ADMIN_USERS_FUNCTION_URL=`${SUPABASE_URL}/functions/v1/admin-users`;
+const USER_DEFAULT_PERMISSIONS={
+  view_dashboard:true,
+  view_ship:true,
+  edit_ship:true,
+  view_stock:true,
+  edit_stock:true,
+  view_purchase:true,
+  edit_purchase:true,
+  view_records:true,
+  view_actions:true,
+  view_product:true,
+  edit_product:true,
+  view_settings:true,
+  manage_settings:true,
+  manage_users:true,
+  import_export:true,
+  print_labels:true
+};
+const USER_PERMISSION_LABELS=[
+  ['view_dashboard','查看總覽'],
+  ['view_ship','查看商品出貨'],
+  ['edit_ship','操作商品出貨'],
+  ['view_stock','查看庫存資料'],
+  ['edit_stock','編輯庫存資料'],
+  ['view_purchase','查看進貨 / 到貨'],
+  ['edit_purchase','操作進貨 / 到貨'],
+  ['view_records','查看出貨紀錄'],
+  ['view_actions','查看所有動作紀錄'],
+  ['view_product','查看商品資訊'],
+  ['edit_product','編輯商品資訊'],
+  ['view_settings','查看設定'],
+  ['manage_settings','修改設定'],
+  ['manage_users','帳號管理'],
+  ['import_export','匯入 / 匯出'],
+  ['print_labels','列印標籤']
+];
+const TAB_VIEW_PERMISSIONS={
+  dashboard:'view_dashboard',
+  ship:'view_ship',
+  stock:'view_stock',
+  purchase:'view_purchase',
+  records:'view_records',
+  actions:'view_actions',
+  product:'view_product',
+  settings:'view_settings'
+};
+function normalizeAccount(v){return String(v||'').trim().toLowerCase().replace(/\s+/g,'')}
+function emailFromAccount(account){const v=normalizeAccount(account);return v.includes('@')?v:`${v}@${STOCK_LOGIN_DOMAIN}`}
+function displayAccountFromEmail(email){return String(email||'').replace(new RegExp(`@${STOCK_LOGIN_DOMAIN.replace('.','\\.')}$`,'i'),'')}
+function currentAccountName(){return currentUser?displayAccountFromEmail(currentUser.email||''):''}
+function hasPermission(key){if(!currentUser)return false;if(!currentProfile)return false;return currentProfile.permissions&&currentProfile.permissions[key]===true}
+function assertPermission(key,label='此功能'){if(!hasPermission(key))throw new Error(`沒有權限使用：${label}`)}
+function actionPermissionKey(action){
+  const map={
+    createProducts:'edit_product',
+    updateProduct:'edit_product',
+    deleteProduct:'edit_product',
+    sortProducts:'edit_product',
+    toggleNextDayDelivery:'edit_stock',
+    toggleLongStock:'edit_stock',
+    inboundStock:'edit_stock',
+    decreaseStock:'edit_stock',
+    adjustStock:'edit_stock',
+    addPurchase:'edit_purchase',
+    addArrival:'edit_purchase',
+    deletePurchaseBatch:'edit_purchase',
+    updateSettings:'manage_settings',
+    replaceAllData:'import_export',
+    appendImportData:'import_export',
+    clearAll:'manage_settings'
+  };
+  return map[action]||'';
+}
+function assertActionPermission(action){const key=actionPermissionKey(action);if(key)assertPermission(key,action)}
+async function loadCurrentProfile(){
+  if(!currentUser){currentProfile=null;return null}
+  const {data,error}=await db.from('user_profiles').select('*').eq('email',currentUser.email).maybeSingle();
+  dbError(error);
+  if(!data)throw new Error('此帳號沒有權限資料，請到帳號管理建立權限。');
+  if(data.is_active!==true)throw new Error('此帳號已停用，無法進入系統。');
+  currentProfile=data;
+  return data;
+}
+function permissionCheckboxesHtml(permissions){
+  const perms={...USER_DEFAULT_PERMISSIONS,...(permissions||{})};
+  return `<div class="permission-grid">${USER_PERMISSION_LABELS.map(([key,label])=>`<label class="permission-check"><input type="checkbox" data-perm="${esc(key)}" ${perms[key]?'checked':''}><span>${esc(label)}</span></label>`).join('')}</div>`;
+}
+function readPermissionsFrom(container){
+  const permissions={};
+  USER_PERMISSION_LABELS.forEach(([key])=>{const input=container?.querySelector(`[data-perm="${key}"]`);permissions[key]=!!input?.checked});
+  return permissions;
+}
+async function adminUsersApi(action,payload={}){
+  const {data,error}=await db.auth.getSession();
+  dbError(error);
+  const token=data.session?.access_token;
+  if(!token)throw new Error('尚未登入，無法操作帳號管理。');
+  const res=await fetch(ADMIN_USERS_FUNCTION_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`,'apikey':SUPABASE_ANON_KEY},body:JSON.stringify({action,...payload})});
+  const json=await res.json().catch(()=>({}));
+  if(!res.ok||json.ok===false)throw new Error(json.message||'帳號管理功能執行失敗');
+  return json;
+}
+function applyPermissionUI(){
+  const logged=!!currentUser;
+  document.querySelectorAll('.tab-btn').forEach(btn=>{
+    const tab=btn.dataset.tab;
+    const perm=TAB_VIEW_PERMISSIONS[tab];
+    const show=!logged||!perm||hasPermission(perm);
+    btn.style.display=show?'':'none';
+  });
+  const accountCard=$('accountManagerCard');
+  if(accountCard)accountCard.style.display=hasPermission('manage_users')?'':'none';
+  ['btnExportJson','btnExportCsv','btnExportSalesCsv','btnExportActionCsv','importJson','appendJson'].forEach(id=>{const el=$(id);if(el)el.style.display=hasPermission('import_export')?'':'none'});
+  document.querySelectorAll('label[for="importJson"],label[for="appendJson"]').forEach(el=>{el.style.display=hasPermission('import_export')?'inline-flex':'none'});
+  const active=activeTabId();
+  const activePerm=TAB_VIEW_PERMISSIONS[active];
+  if(logged&&activePerm&&!hasPermission(activePerm)){
+    const first=Object.entries(TAB_VIEW_PERMISSIONS).find(([,perm])=>hasPermission(perm));
+    if(first)switchTab(first[0]);
+  }
+}
+async function loadManagedUsers(){
+  if(!hasPermission('manage_users')){if($('userManagerStatus'))$('userManagerStatus').textContent='沒有帳號管理權限。';return}
+  const status=$('userManagerStatus');
+  if(status){status.className='notice';status.textContent='讀取帳號中...'}
+  try{
+    const res=await adminUsersApi('list');
+    managedUsers=res.users||[];
+    renderManagedUsers();
+    if(status){status.className='notice success';status.textContent=`已讀取 ${managedUsers.length} 個帳號。`}
+  }catch(err){
+    if(status){status.className='notice danger';status.textContent='讀取失敗：'+(err.message||err)}
+  }
+}
+function renderNewAccountPermissions(){const box=$('newAccountPermissions');if(box)box.innerHTML=permissionCheckboxesHtml(USER_DEFAULT_PERMISSIONS)}
+function renderManagedUsers(){
+  const box=$('managedUsersTable');
+  if(!box)return;
+  if(!managedUsers.length){box.innerHTML='<div class="empty">尚無帳號。</div>';return}
+  box.innerHTML=managedUsers.map(user=>{
+    const active=user.is_active===true;
+    const username=user.username||displayAccountFromEmail(user.email);
+    const role=user.role||'user';
+    const isSelf=currentUser&&user.email===currentUser.email;
+    return `<details class="user-card user-manage-card" data-user-id="${esc(user.id)}">
+      <summary><div class="user-summary-row"><div class="user-name-block"><strong>${esc(username)}${isSelf?'（目前登入）':''}</strong><span class="muted">${esc(user.email)}｜${esc(role)}</span></div><span class="user-status-pill ${active?'':'off'}">${active?'啟用中':'已停用'}</span></div></summary>
+      <div class="user-edit-area">
+        <div class="form-grid">
+          <div class="field"><label>角色</label><select data-user-role><option value="user" ${role==='user'?'selected':''}>一般用戶</option><option value="admin" ${role==='admin'?'selected':''}>管理員</option></select></div>
+          <div class="field"><label>新密碼</label><input data-user-password type="text" placeholder="不修改請留空"></div>
+          <div class="field full"><label class="permission-check" style="width:max-content"><input data-user-active type="checkbox" ${active?'checked':''} ${isSelf?'disabled':''}><span>啟用此帳號</span></label></div>
+          <div class="field full"><label>權限設定</label><div data-user-permissions>${permissionCheckboxesHtml(user.permissions||USER_DEFAULT_PERMISSIONS)}</div></div>
+        </div>
+        <div class="user-edit-actions"><button class="btn primary" type="button" onclick="saveManagedUser('${esc(user.id)}')">儲存修改</button><button class="btn red" type="button" onclick="deleteManagedUser('${esc(user.id)}')" ${isSelf?'disabled':''}>移除帳號</button></div>
+      </div>
+    </details>`;
+  }).join('');
+}
+function findUserCard(id){return [...document.querySelectorAll('.user-manage-card')].find(card=>card.dataset.userId===id)}
+async function createManagedUser(){
+  if(!hasPermission('manage_users'))return appAlert('沒有帳號管理權限。','權限不足',{danger:true});
+  const username=$('newAccountUsername')?.value.trim();
+  const password=$('newAccountPassword')?.value.trim()||'123456';
+  const role=$('newAccountRole')?.value||'user';
+  if(!username)return appAlert('請輸入帳號。','新增帳號');
+  if(password.length<6)return appAlert('密碼至少 6 碼。','新增帳號');
+  const permissions=readPermissionsFrom($('newAccountPermissions'));
+  setLoading(true);
+  try{
+    await adminUsersApi('create',{username,password,role,permissions});
+    $('newAccountUsername').value='';
+    $('newAccountPassword').value='123456';
+    $('newAccountRole').value='user';
+    renderNewAccountPermissions();
+    await loadManagedUsers();
+    await appAlert('帳號已建立。','完成');
+  }catch(err){
+    await appAlert('建立失敗：'+(err.message||err),'建立失敗',{danger:true});
+  }finally{setLoading(false)}
+}
+window.saveManagedUser=async function(id){
+  if(!hasPermission('manage_users'))return appAlert('沒有帳號管理權限。','權限不足',{danger:true});
+  const card=findUserCard(id);if(!card)return;
+  const role=card.querySelector('[data-user-role]')?.value||'user';
+  const password=card.querySelector('[data-user-password]')?.value.trim()||'';
+  const is_active=!!card.querySelector('[data-user-active]')?.checked;
+  const permissions=readPermissionsFrom(card.querySelector('[data-user-permissions]'));
+  setLoading(true);
+  try{
+    await adminUsersApi('update',{id,role,password,is_active,permissions});
+    if(currentProfile&&currentProfile.id===id)await loadCurrentProfile();
+    applyPermissionUI();
+    await loadManagedUsers();
+    await appAlert('帳號已更新。','完成');
+  }catch(err){
+    await appAlert('更新失敗：'+(err.message||err),'更新失敗',{danger:true});
+  }finally{setLoading(false)}
+};
+window.deleteManagedUser=async function(id){
+  if(!hasPermission('manage_users'))return appAlert('沒有帳號管理權限。','權限不足',{danger:true});
+  const ok=await appConfirm('確定要移除此帳號？移除後無法用此帳號登入。','移除帳號',{danger:true,confirmText:'確認移除'});
+  if(!ok)return;
+  setLoading(true);
+  try{
+    await adminUsersApi('delete',{id});
+    await loadManagedUsers();
+    await appAlert('帳號已移除。','完成');
+  }catch(err){
+    await appAlert('移除失敗：'+(err.message||err),'移除失敗',{danger:true});
+  }finally{setLoading(false)}
+};
+function renderUserManager(){
+  if(!$('accountManagerCard'))return;
+  renderNewAccountPermissions();
+  if(!currentUser||!hasPermission('manage_users')){$('accountManagerCard').style.display='none';return}
+  $('accountManagerCard').style.display='';
+  if(!managedUsers.length)loadManagedUsers();
+}
+
 const shipQueue=[];
 let shipQueueRunning=false;
 let shipQueueSeq=0;
@@ -3515,30 +3942,37 @@ function updateAuthUI(){
   if($('authPassword'))$('authPassword').style.display=logged?'none':'inline-block';
   if($('authEmail'))$('authEmail').style.display=logged?'none':'inline-block';
   if($('authStatus')){
-    $('authStatus').textContent=logged?('已登入：'+(currentUser.email||'')):'未登入';
+    $('authStatus').textContent=logged?('已登入：'+currentAccountName()):'未登入';
     $('authStatus').classList.toggle('ok',logged);
     $('authStatus').classList.toggle('fail',!logged);
   }
 
   if($('gateStatus')){
-    $('gateStatus').textContent=logged?('已登入：'+(currentUser.email||'')):'請輸入帳號密碼登入';
+    $('gateStatus').textContent=logged?('已登入：'+currentAccountName()):'請輸入帳號密碼登入';
     $('gateStatus').classList.toggle('ok',logged);
     $('gateStatus').classList.toggle('fail',!logged);
   }
 
   if(logged&&$('gatePassword'))$('gatePassword').value='';
-  if(!logged)renderDbUsage(null,'offline');
+  if(!logged){
+    currentProfile=null;
+    managedUsers=[];
+    renderDbUsage(null,'offline');
+  }
+  applyPermissionUI();
 }
+
 async function login(){
-  const email=(($('gateEmail')?.value||'').trim()||($('authEmail')?.value||'').trim());
+  const account=(($('gateEmail')?.value||'').trim()||($('authEmail')?.value||'').trim());
+  const email=account?emailFromAccount(account):'';
   const password=(($('gatePassword')?.value||'').trim()||($('authPassword')?.value||'').trim());
 
-  if(!email||!password){
+  if(!account||!password){
     if($('gateStatus')){
-      $('gateStatus').textContent='請輸入 Email 和密碼';
+      $('gateStatus').textContent='請輸入帳號和密碼';
       $('gateStatus').classList.add('fail');
     }
-    return appAlert('請輸入 Email 和密碼','登入提醒');
+    return appAlert('請輸入帳號和密碼','登入提醒');
   }
 
   setLoading(true);
@@ -3552,8 +3986,9 @@ async function login(){
     dbError(error);
     currentUser=data.user;
     sessionLoginPassword=password;
+    await loadCurrentProfile();
 
-    if($('authEmail'))$('authEmail').value=email;
+    if($('authEmail'))$('authEmail').value=displayAccountFromEmail(email);
     if($('authPassword'))$('authPassword').value='';
 
     updateAuthUI();
@@ -3563,8 +3998,12 @@ async function login(){
     if($('shipCode'))$('shipCode').focus();
   }catch(err){
     sessionLoginPassword='';
+    currentProfile=null;
+    currentUser=null;
+    try{await db.auth.signOut()}catch(_e){}
+    updateAuthUI();
     if($('gateStatus')){
-      $('gateStatus').textContent='登入失敗，請確認帳號密碼';
+      $('gateStatus').textContent='登入失敗，請確認帳號密碼或權限設定';
       $('gateStatus').classList.add('fail');
     }
     await appAlert('登入失敗：'+(err.message||err),'登入失敗',{danger:true});
@@ -3578,6 +4017,8 @@ async function logout(){
     teardownRealtime();
     await db.auth.signOut();
     currentUser=null;
+    currentProfile=null;
+    managedUsers=[];
     sessionLoginPassword='';
     state.products=[];
     state.sales=[];
@@ -4199,7 +4640,7 @@ async function clearAll(){
   return{message:'已清空資料'};
 }
 async function sortProducts(){state.products.sort((a,b)=>String(a.code).localeCompare(String(b.code),'en',{numeric:true}));return{message:'已依編號排序'}}
-async function apiSupabase(action,payload){payload=payload||{};requireLogin();let result={};if(action==='getAllData')return{ok:true,state:await fetchAllState(),result:{}};if(action==='createProducts')result=await createProducts(payload);else if(action==='updateProduct')result=await updateProduct(payload);else if(action==='deleteProduct')result=await dbDeleteProduct(payload);else if(action==='toggleNextDayDelivery')result=await toggleNextDayDelivery(payload);else if(action==='toggleLongStock')result=await toggleLongStock(payload);else if(action==='addPurchase')result=await addPurchase(payload);else if(action==='addArrival')result=await dbAddArrival(payload);else if(action==='deletePurchaseBatch')result=await dbDeletePurchaseBatch(payload);else if(action==='inboundStock')result=await changeStock(payload,'inbound');else if(action==='decreaseStock')result=await changeStock(payload,'decrease');else if(action==='adjustStock')result=await changeStock(payload,'adjust');else if(action==='updateSettings')result=await updateSettings(payload);else if(action==='sortProducts')result=await sortProducts(payload);else if(action==='replaceAllData')result=await replaceAllData(payload);else if(action==='appendImportData')result=await appendImportData(payload);else if(action==='clearAll')result=await clearAll(payload);else throw new Error('未知 API 動作：'+action);return{ok:true,state:await fetchAllState(),result}}
+async function apiSupabase(action,payload){payload=payload||{};requireLogin();assertActionPermission(action);let result={};if(action==='getAllData')return{ok:true,state:await fetchAllState(),result:{}};if(action==='createProducts')result=await createProducts(payload);else if(action==='updateProduct')result=await updateProduct(payload);else if(action==='deleteProduct')result=await dbDeleteProduct(payload);else if(action==='toggleNextDayDelivery')result=await toggleNextDayDelivery(payload);else if(action==='toggleLongStock')result=await toggleLongStock(payload);else if(action==='addPurchase')result=await addPurchase(payload);else if(action==='addArrival')result=await dbAddArrival(payload);else if(action==='deletePurchaseBatch')result=await dbDeletePurchaseBatch(payload);else if(action==='inboundStock')result=await changeStock(payload,'inbound');else if(action==='decreaseStock')result=await changeStock(payload,'decrease');else if(action==='adjustStock')result=await changeStock(payload,'adjust');else if(action==='updateSettings')result=await updateSettings(payload);else if(action==='sortProducts')result=await sortProducts(payload);else if(action==='replaceAllData')result=await replaceAllData(payload);else if(action==='appendImportData')result=await appendImportData(payload);else if(action==='clearAll')result=await clearAll(payload);else throw new Error('未知 API 動作：'+action);return{ok:true,state:await fetchAllState(),result}}
 async function callApi(action,payload,cb){setLoading(true);try{const res=await apiSupabase(action,payload||{});if(!res||!res.ok){await appAlert(res?.message||'操作失敗','操作失敗',{danger:true});return null}if(res.state)Object.assign(state,res.state);renderAll();if(action!=='getAllData')scheduleDatabaseUsageRefresh(1200);if(cb)cb(res.result||{});return res}catch(err){const msg=friendlyErrorMessage(err);const isDup=msg.includes('編號重複');await appAlert(msg,isDup?'編號重複':'系統錯誤',{danger:!isDup,icon:isDup?'!':undefined});return null}finally{setLoading(false)}}
 function loadData(){return callApi('getAllData',{},()=>{})}
 function activeTabId(){const el=document.querySelector('.tab.active');return el?el.id:'dashboard'}
@@ -4212,7 +4653,10 @@ function renderCurrentTab(){
   else if(tab==='ship'){renderShipPreview();renderShipQueue()}
   else if(tab==='records')renderSales();
   else if(tab==='actions')renderActions();
-  else if(tab==='settings')renderSettings();
+  else if(tab==='settings'){
+    renderSettings();
+    renderUserManager();
+  }
 }
 function renderAll(){renderSummary();renderNextDayWarningFloat();renderCurrentTab()}
 function renderSummary(){const pc=state.products.length,on=state.products.reduce((s,p)=>s+toNum(p.currentStock),0),tot=state.products.reduce((s,p)=>s+totalStock(p),0),cost=state.products.reduce((s,p)=>s+totalCost(p),0),sales=state.products.reduce((s,p)=>s+toNum(p.totalSales),0);$('summary').innerHTML=`<div class="metric"><div class="value">${pc}</div><div class="label">商品品項</div></div><div class="metric"><div class="value">${on}</div><div class="label">現貨庫存</div></div><div class="metric"><div class="value">${tot}</div><div class="label">進貨庫存</div></div><div class="metric"><div class="value">$${money(cost)}</div><div class="label">總成本</div></div><div class="metric"><div class="value">${sales}</div><div class="label">累積銷量</div></div>`}
@@ -4320,6 +4764,7 @@ async function callStockFast(action,payload,cb){
   setLoading(true);
   try{
     requireLogin();
+    assertPermission('edit_stock','編輯庫存資料');
     let result={};
     if(action==='inboundStock')result=await changeStock(payload||{},'inbound');
     else if(action==='decreaseStock')result=await changeStock(payload||{},'decrease');
@@ -4352,6 +4797,7 @@ async function callPurchaseFast(action,payload,cb){
   setLoading(true);
   try{
     requireLogin();
+    assertPermission('edit_purchase','操作進貨 / 到貨');
     const code=normalizeCode(payload?.code);
     const pBefore=findProduct(code);
     if(!pBefore)throw new Error('找不到商品：'+code);
@@ -5014,7 +5460,10 @@ function addShipQueue(){
   keepShipCodeReady();
   processShipQueue();
 }
-function handleShip(){addShipQueue()}
+function handleShip(){
+  if(!hasPermission('edit_ship'))return appAlert('沒有商品出貨操作權限。','權限不足',{danger:true});
+  addShipQueue();
+}
 function playShipFailSound(){
   try{
     const AudioCtx=window.AudioContext||window.webkitAudioContext;
@@ -5157,7 +5606,20 @@ function clearFinishedQueue(){
 }
 function saveSettings(){callApi('updateSettings',{settings:{feePlatform:toNum($('feePlatform').value),feeService:toNum($('feeService').value),feeExtra:toNum($('feeExtra').value),feeOther:toNum($('feeOther').value),shippingBase:toNum($('shippingBase').value),lowStockThreshold:toNum($('lowStockThreshold').value)}},()=>updateProductProfitPreview())}
 function doQuickSearch(){const q=$('quickSearch').value.trim(),rows=productRows(q);$('quickResult').innerHTML=!q?'<div class="empty">請輸入查詢內容。</div>':rows.length?rows.slice(0,8).map(p=>`<div class="notice"><strong>${esc(p.itemName)} / ${esc(p.color)}</strong><br>編號：<span class="code">${esc(p.code)}</span><br>現貨：${toNum(p.currentStock)}｜進貨庫存：${totalStock(p)}｜未到貨：${pendingQty(p)}</div>`).join(''):'<div class="empty">查無商品。</div>'}
-function switchTab(tab){document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('active',e.id===tab));renderCurrentTab();if(tab==='ship'||tab==='records')pollShipRealtimeFallback()}
+function switchTab(tab){
+  const perm=TAB_VIEW_PERMISSIONS[tab];
+  if(currentUser&&perm&&!hasPermission(perm)){
+    appAlert('沒有權限查看此頁面。','權限不足',{danger:true});
+    const first=Object.entries(TAB_VIEW_PERMISSIONS).find(([,p])=>hasPermission(p));
+    if(first&&first[0]!==tab)tab=first[0];
+    else return;
+  }
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+  document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('active',e.id===tab));
+  renderCurrentTab();
+  if(tab==='ship'||tab==='records')pollShipRealtimeFallback();
+  if(tab==='ship')keepShipCodeReady();
+}
 function dateFileName(){const d=new Date(),p=n=>String(n).padStart(2,'0');return`${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}_${p(d.getHours())}${p(d.getMinutes())}`}
 function csvEscape(v){return'"'+String(v??'').replaceAll('"','""')+'"'}
 function downloadText(text,name,type='text/plain;charset=utf-8'){const blob=new Blob([text],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url)}
@@ -5286,13 +5748,21 @@ function initUiFontSize(){
 async function initAuth(){
   try{
     await getSessionUser();
-    updateAuthUI();
     if(currentUser){
+      await loadCurrentProfile();
+      updateAuthUI();
       await loadData();
       await loadDatabaseUsage();
       setupRealtime();
-    }else renderAll();
+    }else{
+      updateAuthUI();
+      renderAll();
+    }
   }catch(err){
+    currentUser=null;
+    currentProfile=null;
+    managedUsers=[];
+    try{await db.auth.signOut()}catch(_e){}
     updateAuthUI();
     appAlert('初始化登入狀態失敗：'+(err.message||err),'初始化失敗',{danger:true});
   }
@@ -5385,7 +5855,10 @@ function bindEvents(){
     };
   }
   if($('btnClearAll'))$('btnClearAll').onclick=confirmClearAllWithPassword;
+  if($('btnCreateAccount'))$('btnCreateAccount').onclick=createManagedUser;
+  if($('btnReloadUsers'))$('btnReloadUsers').onclick=loadManagedUsers;
 }
+
 bindEvents();initTheme();initUiFontSize();if($('orderDate'))$('orderDate').value=todayInputDate();initAuth();
 </script>
 </body>
